@@ -37,3 +37,16 @@ router.post("/", async (req, res) => {
         return res.status(500).json({error:err.message});
     }
 });
+
+//delete a post
+roter.delete("/:id",async (req,res) =>{
+    const id = req.params.id;
+    try {
+        const result = await pool.query("DELETE FROM posts WHERE id=$1 RETURNING *", [id]);
+        if(result.length===0){
+            return res.status(404).json({error: "Post not found"});
+        } 
+    }catch (err) {
+        return res.status(500).json({error:err.message});
+    }
+});
