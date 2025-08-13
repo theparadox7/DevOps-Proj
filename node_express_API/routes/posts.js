@@ -39,14 +39,29 @@ router.post("/", async (req, res) => {
 });
 
 //delete a post
-roter.delete("/:id",async (req,res) =>{
+router.delete("/:id",async (req,res) =>{
     const id = req.params.id;
     try {
         const result = await pool.query("DELETE FROM posts WHERE id=$1 RETURNING *", [id]);
-        if(result.length===0){
+        if(result.rows.length===0){
             return res.status(404).json({error: "Post not found"});
         } 
     }catch (err) {
         return res.status(500).json({error:err.message});
     }
+});
+
+//update a post
+router.put("/:id", async (req,res) =>{
+    const id = req.params.id;
+    const {title,content,published}=req.body;
+    try {
+        const result = await pool.query("UPDATE posts SET title=$1, content=$2,published=$3 WHERE id=$4 RETURNING *", [title, content, published, id]);
+        if(result.rows.length===0){
+            return res.status(404).json({error:"Post not found"});
+        }
+        res.json({post: result.rows[0]});
+    }catch (err) {
+        return res.status(500).json({error:err.message});
+    }   
 });
