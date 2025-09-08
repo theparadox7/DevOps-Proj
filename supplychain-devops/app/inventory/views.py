@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from django.http import JsonResponse
 
-# Create your views here.
+def inventory_view(request):
+    data = {
+        "item": "Steel Rods",
+        "quantity": 1200,
+        "status": "Available"
+    }
+    return JsonResponse(data)
